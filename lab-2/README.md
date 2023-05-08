@@ -30,10 +30,11 @@ A informação sobre porta e endereço do servidor estará pré-definida no cód
 
 O cliente pode enviar 2 tipos de mensagens para o servidor:
 
-1. Uma string, correspondente à uma chave. Se a chave existir no dicionário, o servidor retorna a lista de valores associados, em ordem alfabética. Se a chave não existir, retorna uma lista vazia. 
+1. Uma string alfanumérica, correspondente à uma chave. Se a chave existir no dicionário, o servidor retorna a lista de valores associados, em ordem alfabética. Se a chave não existir, retorna uma lista vazia. 
 * Ex: Cliente envia "chave". Servidor responde ["valor1", "valor2"].
+* Ex: Cliente envia "chavi". Servidor responde [].
 
-2. Uma tupla ("chave", "valor"). Se já existir uma chave com esse nome, o servidor acrescentará o novo valor à lista e responderá com a lista de valores atualizada. Se não existir, o servidor criará a chave no dicionário com o valor fornecido e retornará a nova lista, com apenas o valor fornecido inicialmente. 
+2. Dois termos alfanuméricos separados por vírgula como em "chave, valor". Se já existir uma chave com esse nome, o servidor acrescentará o novo valor à lista e responderá com a lista de valores atualizada. Se não existir, o servidor criará a chave no dicionário com o valor fornecido e retornará a nova lista, com apenas o valor fornecido inicialmente. 
 * Ex. 1: Cliente envia ("chave1", "valor2"). Servidor responde ["valor1", "valor2"].
 * Ex. 2: Cliente envia ("chave2", "valorX"). Servidor responde ["valorX"].
 
@@ -42,6 +43,12 @@ O cliente pode enviar 2 tipos de mensagens para o servidor:
 O primeiro passo foi pegar o código multiplexado e concorrente visto nas vídeo-aulas e adaptá-lo para o objetivo deste trabalho.
 
 Primeiramente, dividimos o código em 2 arquivos com nomes auto-explicativos: `cliente.py` e `servidor.py`.
+
+Depois, criamoso o arquivo `persistencia.py` que abriga a classe Dicionario, que cuida da parte de acesso e persistência no arquivo que guarda os dados do dicionário.
+
+Para fazer a persistência, decidimos salvar o dicionário em um arquivo JSON, que é atualizado a cada modificação solicitada pelo cliente.
+
+Para evitar erros de race condition no acesso ao dicionário do Python e ao arquivo JSON, utilizamos um lock  em `servidor.py` toda vez que vamos utilizar algum método da classe Dicionario (com o context manager - with - tudo fica mais fácil e mais legível).
 
 
 

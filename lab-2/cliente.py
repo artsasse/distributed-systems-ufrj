@@ -1,46 +1,46 @@
-#servidor de echo: lado cliente
 import socket
 
-HOST = 'localhost' # maquina onde esta o servidor
-PORT = 10000       # porta que o servidor esta escutando
+class Cliente:
+    def __init__(self, host, port):
+        self.host = host
+        self.port = port
+        self.sock = None
 
-def iniciaCliente():
-	'''Cria um socket de cliente e conecta-se ao servidor.
-	Saida: socket criado'''
-	# cria socket
-	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM) #Internet (IPv4 + TCP) 
+    def conecta(self):
+        '''Cria um socket de cliente e conecta-se ao servidor.'''
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # Internet (IPv4 + TCP)
+        self.sock.connect((self.host, self.port))
 
-	# conecta-se com o servidor
-	sock.connect((HOST, PORT)) 
+    def faz_requisicoes(self):
+        '''Envia requisições para o servidor e exibe os resultados.'''
+        # Lê mensagens do usuário até digitar 'fim'
+        while True:
+            msg = input("Digite uma mensagem ('fim' para terminar): ")
+            if msg == 'fim':
+                break
 
-	return sock
+            # Envia a mensagem do usuário para o servidor
+            self.sock.sendall(msg.encode('utf-8'))
 
-def fazRequisicoes(sock):
-	'''Faz requisicoes ao servidor e exibe o resultado.
-	Entrada: socket conectado ao servidor'''
-	# le as mensagens do usuario ate ele digitar 'fim'
-	while True: 
-		msg = input("Digite uma mensagem ('fim' para terminar):")
-		if msg == 'fim': break 
+            # Aguarda a resposta do servidor
+            msg = self.sock.recv(1024)
 
-		# envia a mensagem do usuario para o servidor
-		sock.send(msg.encode('utf-8'))
+            # Exibe a mensagem recebida
+            print(str(msg, encoding='utf-8'))
 
-		#espera a resposta do servidor
-		msg = sock.recv(1024) 
+        # Encerra a conexão
+        self.sock.close()
 
-		# imprime a mensagem recebida
-		print(str(msg, encoding='utf-8'))
+    def executa(self):
+        '''Método principal para executar o loop do cliente.'''
+        self.conecta()
+        self.faz_requisicoes()
 
-	# encerra a conexao
-	sock.close()
 
-def main():
-	'''Funcao principal do cliente'''
-	#inicia o cliente
-	sock = iniciaCliente()
-	#interage com o servidor ate encerrar
-	fazRequisicoes(sock)
+if __name__ == '__main__':
+    HOST = 'localhost'  # Máquina do servidor
+    PORT = 10000        # Porta de escuta do servidor
 
-main()
+    cliente = Cliente(HOST, PORT)
+    cliente.executa()
  
