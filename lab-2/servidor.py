@@ -41,7 +41,7 @@ class Servidor:
         self.sock.listen(5)
 
         # configura o socket para o modo nao-bloqueante
-        # self.sock.setblocking(False)
+        self.sock.setblocking(False)
 
         # inclui o socket principal na lista de entradas de interesse
         self.entradas.append(self.sock)
